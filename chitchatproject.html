@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHITCHAT</title>
+</head>
+
+<body>
+    <div>
+        <h1 style="text-align: center; background-color: rgb(191, 226, 94);">CHITCHAT</h1>
+    </div>
+    <form onsubmit="savedatainstorage(event)" style="background-color: rgb(187, 201, 123)">
+        <label for="name">
+            <h3> Name</h3>
+        </label>
+        <input type="text" id="name" name="namedata" required>
+        <label for="number">
+            <h3>Number</h3>
+        </label>
+        <input type="tel" id="mobile" name="mobiledata" required>
+        <br>
+        <br>
+        <select id="timing" name="timingdata">
+            <option id="default">select your timing(default)</option>
+            <option>3:00pm-5:00pm</option>
+            <option>6:00pm-8:00pm</option>
+            <option>8:00pm-10:00pm</option>
+        </select>
+        <br>
+        <br>
+        <button type="submit"
+            style="color: rgb(7, 7, 7); background-color: rgb(255, 217, 0); font-weight: 900;  ">submit</button>
+        <hr>
+
+    </form>
+    <ul id="status"></ul>
+
+
+
+    <ul id="list">
+
+        <li id="lin"></li>
+
+        <li id="link"></li>
+
+        <li id="liga"></li>
+    </ul>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+
+    <script>
+        function savedatainstorage(event) {
+            event.preventDefault();
+            const name = event.target.namedata.value;
+            const mobile = event.target.mobiledata.value;
+            const timing = event.target.timingdata.value;
+            const myobj = {
+                name,
+                mobile,
+                timing
+            }
+            const stringifymyobj = JSON.stringify(myobj);
+            // localStorage.setItem("user", stringifymyobj);
+            axios.post("https://crudcrud.com/api/547e666bfd6544b6b2b069f7e4dfd368/datas", myobj)
+            .then((response) => {
+                console.log(response)
+                getmessageonscreen(response.data);//.data means we are getting new generated id from backend server to our website along with all other objects which we have created
+                
+               
+
+                alert(myobj.name + " ,  your submission is successful ");
+            })
+                .catch((err) => {
+                    console.log(err)
+                })
+
+ getmessageonscreen(myobj);
+
+        }
+        window.addEventListener("DOMContentLoaded"),()=>{
+            axios.get(`https://crudcrud.com/api/547e666bfd6544b6b2b069f7e4dfd368/datas/${myobj._id}`)
+            .then((res)=>{
+                getmessageonscreen(res.data)
+
+            })
+        }
+        function getmessageonscreen(myobj) {
+            console.log(myobj._id);
+
+            const status = document.getElementById("status")
+            const parent = document.getElementById("list");
+
+            const childs = document.getElementById("liga");
+
+            const child1 = document.getElementById("lin");
+            const child2 = document.getElementById("link");
+
+            child2.innerText = myobj.name + ", your submission is registered and we are finding your companion for " + myobj.timing + " slot.\n soon we will give u an update on " + myobj.mobile + "  till then wait" + `${myobj._id}`;
+            childs.innerText = "if u want to delete/withdraw ur submission then click on delete button"
+            child1.innerText = "if u want to edit your submission then click on edit button and after that enter correct details and then hit submit button again     ";
+
+
+
+
+            list.style.backgroundColor = "grey"
+            list.style.fontWeight = "bold"
+
+
+
+
+            child2.style.backgroundColor = "grey"
+            child1.style.backgroundColor = "yellow"
+            childs.style.backgroundColor = "grey"
+
+            child1.style.textAlign = "left"
+
+            status.innerText = "YOUR SUBMISSION STATUS";
+            status.style.textAlign = "center"
+
+            status.style.backgroundColor = "pink"
+            status.style.fontWeight = "bold"
+
+
+
+
+            const deletebtn = document.createElement("input")
+            deletebtn.type = "button"
+            deletebtn.value = "delete"
+
+            deletebtn.onclick = () => {
+
+                axios.delete(`https://crudcrud.com/api/547e666bfd6544b6b2b069f7e4dfd368/datas/${myobj._id}`)
+                    .then((res) => {
+
+                        console.log(res);
+
+                        alert("your data is deleted");
+
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    })
+
+                child1.innerText = "YOUR SUBMISSION IS DELETED";
+                status.style.backgroundColor = "deeppink"
+                child1.style.textAlign = "center"
+                child2.innerText = "";
+                childs.innerText = "";
+                document.getElementById("name").value = "";
+                document.getElementById("mobile").value = "";
+
+            }
+
+
+
+            const editbtn = document.createElement("input")
+            editbtn.type = "button"
+            editbtn.value = "edit"
+            editbtn.onclick = () => {
+
+                child1.innerText = "YOU ARE EDITING YOUR SUBMISSION,ONCE YOU DO CHANGES THEN HIT SUBMIT BUTTON AGAIN";
+                child2.innerText = "";
+                childs.innerText = "";
+                document.getElementById("name").value = myobj.name;
+                document.getElementById("mobile").value = myobj.mobile;
+                document.getElementById("timing").value = myobj.timing;
+
+                status.style.backgroundColor = "palegreen"
+                // document.getElementById("status").remove(status);
+
+
+            }
+
+
+            childs.append(deletebtn);
+            child1.append(editbtn);
+
+            parent.appendChild(child2);
+            parent.appendChild(child1);
+            parent.appendChild(childs);
+
+
+        }
+        
+
+
+    </script>
+
+
+
+
+</body>
+
+</html>
